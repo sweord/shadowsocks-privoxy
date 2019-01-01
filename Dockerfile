@@ -1,5 +1,5 @@
 FROM alpine:latest
-MAINTAINER bluebu <bluebuwang@gmail.com>
+MAINTAINER sweord <sweord@gmail.com>
 
 #------------------------------------------------------------------------------
 # Environment variables:
@@ -12,18 +12,17 @@ RUN \
       wget \
       py-pip \
       privoxy \
+      supervisor \
   && rm /var/cache/apk/*
 
 ENV SERVER_ADDR     0.0.0.0
-ENV SERVER_PORT     51348
-ENV PASSWORD        psw
-ENV METHOD          aes-128-ctr
-ENV PROTOCOL        auth_aes128_md5
-ENV PROTOCOLPARAM   32
-ENV OBFS            tls1.2_ticket_auth_compatible
+ENV SERVER_PORT     9090
+ENV PASSWORD        pwd
+ENV METHOD          aes-256-cfb
+ENV PROTOCOL        origin
+ENV OBFS            plain
 ENV TIMEOUT         300
-ENV DNS_ADDR        8.8.8.8
-ENV DNS_ADDR_2      8.8.4.4
+
 
 ARG BRANCH=manyuser
 ARG WORK=~
@@ -49,4 +48,5 @@ WORKDIR $WORK/shadowsocksr-$BRANCH/shadowsocks
 #------------------------------------------------------------------------------
 EXPOSE 8118 7070
 
-ENTRYPOINT ["/entrypoint.sh"]
+# ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT  ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]
